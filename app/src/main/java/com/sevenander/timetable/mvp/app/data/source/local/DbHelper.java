@@ -28,7 +28,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     LessonsContract.LessonEntry.COLUMN_END_TIME + TEXT_TYPE + NOT_NULL + COMMA_SEP +
                     LessonsContract.LessonEntry.COLUMN_DAY_INDEX + INT_TYPE + NOT_NULL + COMMA_SEP +
                     LessonsContract.LessonEntry.COLUMN_TYPE + TEXT_TYPE + NOT_NULL + COMMA_SEP +
-                    LessonsContract.LessonEntry.COLUMN_COLOR + NOT_NULL + TEXT_TYPE +
+                    LessonsContract.LessonEntry.COLUMN_COLOR + TEXT_TYPE + NOT_NULL + COMMA_SEP +
                     " UNIQUE (" + LessonsContract.LessonEntry._ID + ")" +
                     " ON CONFLICT REPLACE)" +
                     ";";

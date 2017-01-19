@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Timetable-MVP</string>
+
+    <!-- Lesson details -->
+    <string name="duration">Duration</string>
+    <string name="time_start">Start time</string>
+    <string name="time_end">End time</string>
+    <string name="time_placeholder">00:00</string>
+    <string name="title_placeholder">Title</string>
+    <string name="title_hint">Enter title here</string>
+    <string name="teacher_placeholder">Teacher</string>
+    <string name="room_placeholder">Room</string>
+    <string name="type_placeholder">Type</string>
+    <string name="edit_button">Edit</string>
+    <string name="delete_button">Delete</string>
+
+    <string name="no_data">Failed to load data</string>
 </resources>

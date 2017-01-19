@@ -1,16 +1,25 @@
 package com.sevenander.timetable.mvp.app.data.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.sevenander.timetable.mvp.app.data.Lesson;
 
 import junit.framework.Assert;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LessonsRepository implements LessonsDataSource {
 
     private static LessonsRepository instance = null;
 
     private final LessonsDataSource lessonsLocalDataSource;
+
+    /**
+     * This variable has package local visibility so it can be accessed from tests.
+     */
+    Map<String, Lesson> cachedLessons;
 
     // Prevent direct instantiation.
     private LessonsRepository(@NonNull LessonsDataSource tasksLocalDataSource) {
@@ -45,8 +54,40 @@ public class LessonsRepository implements LessonsDataSource {
     }
 
     @Override
-    public void getLessonById(@NonNull String lessonId, @NonNull GetLessonCallback callback) {
+    public void getLessonById(@NonNull final String lessonId, @NonNull final GetLessonCallback callback) {
+        Assert.assertNotNull(lessonId);
+        Assert.assertNotNull(callback);
 
+        Lesson cachedLesson = getLessonWithId(lessonId);
+        // Respond immediately with cache if available
+        if (cachedLesson != null) {
+            callback.onLessonLoaded(cachedLesson);
+            return;
+        }
+
+        // Load from server/persisted if needed.
+
+        // Is the task in the local data source? If not, query the network.
+        lessonsLocalDataSource.getLessonById(lessonId, new GetLessonCallback() {
+            @Override
+            public void onLessonLoaded(Lesson lesson) {
+                onSuccessLessonLoad(lesson, callback);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    private void onSuccessLessonLoad(Lesson lesson, GetLessonCallback callback) {
+        // Do in memory cache update to keep the app UI up to date
+        if (cachedLessons == null) {
+            cachedLessons = new LinkedHashMap<>();
+        }
+        cachedLessons.put(lesson.getId(), lesson);
+        callback.onLessonLoaded(lesson);
     }
 
     @Override
@@ -67,5 +108,15 @@ public class LessonsRepository implements LessonsDataSource {
     @Override
     public void deleteLessons() {
 
+    }
+
+    @Nullable
+    private Lesson getLessonWithId(@NonNull String id) {
+        Assert.assertNotNull(id);
+        if (cachedLessons == null || cachedLessons.isEmpty()) {
+            return null;
+        } else {
+            return cachedLessons.get(id);
+        }
     }
 }

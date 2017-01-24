@@ -1,4 +1,4 @@
-package com.sevenander.timetable.mvp.app.lessondetail;
+package com.sevenander.timetable.mvp.app.addeditlesson;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +19,7 @@ import com.sevenander.timetable.mvp.app.utils.Const;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class LessonDetailActivity extends AppCompatActivity implements FragmentListener {
+public class AddEditLessonActivity extends AppCompatActivity implements FragmentListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -77,9 +77,9 @@ public class LessonDetailActivity extends AppCompatActivity implements FragmentL
         flProgress.setVisibility(View.GONE);
         flNoData.setVisibility(View.GONE);
 
-        etTitle.setVisibility(View.GONE);
-        fabEdit.setVisibility(View.VISIBLE);
-        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setVisibility(View.GONE);
+        fabEdit.setVisibility(View.GONE);
+        etTitle.setVisibility(View.VISIBLE);
         svContent.setVisibility(View.VISIBLE);
     }
 
@@ -110,24 +110,30 @@ public class LessonDetailActivity extends AppCompatActivity implements FragmentL
     }
 
     private void showLessonContent() {
-        LessonDetailFragment lessonDetailFragment = (LessonDetailFragment)
+        AddEditLessonFragment addEditLessonFragment = (AddEditLessonFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fl_lesson_content);
 
-        if (lessonDetailFragment == null) {
-            lessonDetailFragment = LessonDetailFragment.newInstance(lessonId);
+        if (addEditLessonFragment == null) {
+            addEditLessonFragment = AddEditLessonFragment.newInstance(lessonId);
 
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), lessonDetailFragment, R.id.fl_lesson_content);
+                    getSupportFragmentManager(), addEditLessonFragment, R.id.fl_lesson_content);
         }
 
-        initPresenter(lessonDetailFragment);
+        initPresenter(addEditLessonFragment);
     }
 
-    private void initPresenter(LessonDetailContract.View lessonDetailView) {
-//        lessonId = "12345";
-        new LessonDetailPresenter(
+    private void initPresenter(AddEditLessonContract.View view) {
+
+        boolean shouldLoadDataFromRepo = true; // you should restore the value of this variable
+        // from savedInstance to prevent the presenter from loading data from the repository
+        // if this is a config change.
+
+        lessonId = "12345";
+        new AddEditLessonPresenter(
                 lessonId,
                 Injection.provideLessonsRepository(getApplicationContext()),
-                lessonDetailView);
+                view,
+                shouldLoadDataFromRepo);
     }
 }
